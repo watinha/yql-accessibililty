@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+    <author>Willian Massami Watanabe (willian@yahoo-inc.com)</author>
+    <description>Validate WCAG 1.0 conformance using EvalAccess (http://sipt07.si.ehu.es/evalaccess2/)</description>
+    <documentationURL>http://sipt07.si.ehu.es/evalaccess2/howto.html</documentationURL>
+    <sampleQuery>SELECT * FROM evalaccess;</sampleQuery>
+  </meta>
+  <bindings>
+    <select itemPath="" produces="XML">
+      <urls>
+        <url>http://{evalaccess_url}/evalaccess2/servlet/Evaluate</url>
+      </urls>
+      <inputs>
+        <key id="url" type="xs:string" paramType="query" />
+        <key id="levels" type="xs:string" paramType="query" default="123" />
+        <key id="errors" type="xs:string" paramType="query" default="checked" />
+        <key id="warnings" type="xs:string" paramType="query" default="checked" />
+        <key id="action" type="xs:string" paramType="query" default="Accessibility Evaluation" />
+	<key id="evalaccess_url" type="xs:string" paramType="path" default="sipt07.si.ehu.es" />
+      </inputs>
+      <execute>
+      <![CDATA[
+	var params = {url: url, levels: levels, errors: errors, warnings: warnings, action: action};
+	var response_text = request.contentType('application/html').accept('application/html').query(params).post().response;
+	var output = "";
+	if (response_text){
+		var table_beginning = response_text.search('<h3 class="post">Detailed accessibility evaluation report</h3>');
+		var table_end = response_text.search('<h3 class="post">Checkpoint verification times</h3>');
+		var results = response_text.substring(table_beginning, table_end);
+
+		results = '<result>' + results + '</result>';
+		results = new XML(results);
+		results = y.xmlToJson(results);
+		
+		response.object = results;
+	}
+	]]>
+      </execute>
+    </select>
+  </bindings>
+</table>
