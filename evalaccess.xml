@@ -4,7 +4,9 @@
     <author>Willian Massami Watanabe (willian@yahoo-inc.com)</author>
     <description>Validate WCAG 1.0 conformance using EvalAccess (http://sipt07.si.ehu.es/evalaccess2/)</description>
     <documentationURL>http://sipt07.si.ehu.es/evalaccess2/howto.html</documentationURL>
-    <sampleQuery>SELECT * FROM evalaccess;</sampleQuery>
+    <sampleQuery>SELECT * FROM evalaccess WHERE url='http://www.watinha.com';</sampleQuery>
+    <sampleQuery>SELECT * FROM evalaccess WHERE url='http://www.watinha.com' AND levels='1';</sampleQuery>
+    <sampleQuery>SELECT * FROM evalaccess WHERE url='http://www.watinha.com' AND levels='12';</sampleQuery>
   </meta>
   <bindings>
     <select itemPath="" produces="XML">
@@ -12,7 +14,7 @@
         <url>http://{evalaccess_url}/evalaccess2/servlet/Evaluate</url>
       </urls>
       <inputs>
-        <key id="url" type="xs:string" paramType="query" />
+        <key id="url" type="xs:string" paramType="query" required="true" />
         <key id="levels" type="xs:string" paramType="query" default="123" />
         <key id="errors" type="xs:string" paramType="query" default="checked" />
         <key id="warnings" type="xs:string" paramType="query" default="checked" />
