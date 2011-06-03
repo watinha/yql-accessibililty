@@ -9,7 +9,7 @@
   <bindings>
     <select itemPath="" produces="XML">
       <urls>
-        <url>http://{hera_url}/hera/index.php</url>
+        <url>http://{hera_url}/hera/index.php.en</url>
       </urls>
       <inputs>
         <key id="url" type="xs:string" paramType="query" required="true" />

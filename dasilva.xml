@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table xmlns="http://query.yahooapis.com/v1/schema/table.xsd">
+  <meta>
+    <author>Willian Massami Watanabe (willian@yahoo-inc.com)</author>
+    <description>Validate WCAG 1.0 conformance using DaSilva(http://www.dasilva.org.br)</description>
+    <documentationURL>http://www.dasilva.org.br</documentationURL>
+    <sampleQuery>SELECT * FROM dasilva WHERE url='http://www.watinha.com';</sampleQuery>
+  </meta>
+  <bindings>
+    <select itemPath="" produces="XML">
+      <urls>
+        <url>http://www.acessobrasil.org.br/dasilva/aval.do</url>
+      </urls>
+      <inputs>
+        <key id="url" type="xs:string" paramType="query" required="true" />
+        <key id="selecao" type="xs:string" paramType="query" default="1" />
+        <key id="locale" type="xs:string" paramType="query" default="pt-br" />
+        <key id="avaliar" type="xs:string" paramType="query" default="Avaliação DaSilva" />
+        <key id="ckp1" type="xs:string" paramType="query" default="1" />
+        <key id="ckp2" type="xs:string" paramType="query" default="1" />
+        <key id="ckp3" type="xs:string" paramType="query" default="1" />
+      </inputs>
+      <execute>
+      <![CDATA[
+var params = {url: url, selecao: selecao, locale: locale, avaliar: avaliar, ckp1: ckp1, ckp2: ckp2, ckp3: ckp3};
+var response_text = request.contentType('application/text').accept('application/text').query(params).post().response;
+
+if (response_text){
+  var table_beginning = response_text.search('<ul class="domtabs"');
+  var table_end = response_text.search('<!--fim dos erros-->');
+  var results = response_text.substring(table_beginning, table_end);
+
+  results = '<result><div>' + results + '</result>';
+  results = y.tidy(results);
+  results = new XML(results);
+  results = y.xmlToJson(results);
+
+  var response_xml = <result></result>;
+  for (var i in results.html.body.div.div){
+    var kind_of_message, table;
+    priority_group = results.html.body.div.div[i];
+
+    priority = priority_group.p[0].a.content;
+
+    var table;
+    if (priority_group.table.length){
+      table = priority_group.table[0];
+      kind_of_message = "error";
+    }
+    else{
+      table = priority_group.table;
+      kind_of_message = "warning";
+    }
+
+    for (var j = 2; j < table.tr.length; j++){
+      var row = table.tr[j];
+      if (row.td){
+        var checkpoint, description, lines;
+        checkpoint = row.td[0].p;
+        description = row.td[1].p;
+        lines = y.jsonToXml(row.td[2]);
+
+        var issue;
+        if(kind_of_message == "error")
+          issue = <error></error>;
+        else
+          issue = <warning></warning>;
+
+        issue.appendChild(<priority>{priority}</priority>);
+        issue.appendChild(<checkpoint>{checkpoint}</checkpoint>);
+        issue.appendChild(<description>{description}</description>);
+        issue.appendChild(<lines>{lines}</lines>);
+      }
+      response_xml.appendChild(issue);
+      if (kind_of_message == "error"){
+        kind_of_message = "warning";
+        j = 2;
+        table = priority_group.table[1];
+      }
+    }
+  }
+  response.object = response_xml;
+}
+	]]>
+      </execute>
+    </select>
+  </bindings>
+</table>
