@@ -6,20 +6,20 @@ XML RESPONSE LAYOUT
 -------------------
 
 The base XML structure being used in this projects presents the following data layout:
-> <result>
->     <error>
->       <priority>Priority 1</priority>
->       <checkpoint>1.1</checkpoint>
->       <description>Text descriptions for the error</description>
->       <lines>9</lines>
->     </error> 
->     <warning>
->       <priority>Priority 1</priority>
->       <checkpoint>4.1</checkpoint>
->       <description>Text descriptions for the warning</description>
->       <lines>1</lines> 
->     </warning>
-> </result>
+    &lt;result&gt;
+        lt;error&gt;
+          lt;priority&gt;Priority 1lt;/priority&gt;
+          lt;checkpoint&gt;1.1lt;/checkpoint&gt;
+          lt;description&gt;Text descriptions for the errorlt;/description&gt;
+          lt;lines&gt;9lt;/lines&gt;
+        lt;/error&gt; 
+        lt;warning&gt;
+          lt;priority&gt;Priority 1lt;/priority&gt;
+          lt;checkpoint&gt;4.1lt;/checkpoint&gt;
+          lt;description&gt;Text descriptions for the warninglt;/description&gt;
+          lt;lines&gt;1lt;/lines&gt; 
+        lt;/warning&gt;
+    lt;/result&gt;
 
 These data are encapsulated in a YQL XML formated response from the service, and can be retrieved as XML or JSON text messages. If you would like to get more information on YQL, take a look at: http://developer.yahoo.com/yql/.
 
